@@ -167,7 +167,8 @@ CREATE STREAM demo_car_stream (
     TIMESTAMP='EVENT_TIMESTAMP'
 );
  ```
-Using the above stream you can create desired downstream accordingly to get the results.
+**EXPLANATION**
+A stream represents a series of messages flowing in from an input topic which has been deserialized from bytes and has a schema applied to it so the data can be processed in ksqlDB. The initial demo_car_stream is being created directly based off the data in the demo_car topic. As a user, you have the ability to define additional downstream streams in ksqlDB that filter, transform, aggregate and enrich the data.
 
 4. Use the following statement to query `demo_car_stream ` stream to ensure it's being populated correctly.
 
