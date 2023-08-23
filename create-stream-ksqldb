@@ -18,7 +18,7 @@ CREATE STREAM demo_car_stream (
     TIMESTAMP='EVENT_TIMESTAMP'
 );
 
---STEP 2 -- create the enriched stream for premium calculation
+--STEP 2 -- create the stream for premium calculation
 
 CREATE STREAM demo_car_premium WITH (
     KAFKA_TOPIC='demo_car_premium',
