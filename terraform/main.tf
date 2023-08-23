@@ -61,7 +61,7 @@ resource "confluent_api_key" "clusterAPIKEY" {
 
 # This part creates a topic 
 
-resource "confluent_kafka_topic" "demo_car" {
+resource "confluent_kafka_topic" "quote_request" {
   kafka_cluster {
     id = confluent_kafka_cluster.standard.id
   }
