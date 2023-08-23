@@ -1,0 +1,39 @@
+--- STEP 1 --- crete demo-car strem to populate the required data into the stream which can can be used for enrichment later--
+
+CREATE STREAM demo_car_stream (
+    OWNER_ID VARCHAR,
+    OWNER_NAME VARCHAR,
+    CAR_MODEL VARCHAR,
+    CLAIM_AMOUNT DOUBLE,
+    NUM_CLAIMS INT,
+    RISK_SCORE INT,
+    TRAFFIC_VIOLATIONS INT,
+    SHOWROOM_PRICE DOUBLE,
+    AGE_IN_YEARS INT,
+    IDV DOUBLE,
+    EVENT_TIMESTAMP BIGINT
+) WITH (
+    KAFKA_TOPIC='demo_car',
+    VALUE_FORMAT='JSON',
+    TIMESTAMP='EVENT_TIMESTAMP'
+);
+
+--STEP 2 -- create the enriched stream for premium calculation
+
+CREATE STREAM demo_car_premium WITH (
+    KAFKA_TOPIC='demo_car_premium',
+    PARTITIONS=6
+) AS
+SELECT OWNER_NAME,
+       CAR_MODEL,
+       RISK_SCORE,
+       IDV,
+       CASE
+           WHEN RISK_SCORE >= 4 THEN IDV * 0.04
+           WHEN RISK_SCORE = 3 THEN IDV * 0.03
+           WHEN RISK_SCORE = 2 THEN IDV * 0.02
+           WHEN RISK_SCORE = 1 THEN IDV * 0.01
+           ELSE IDV * 0.01
+       END AS PREMIUM,
+       EVENT_TIMESTAMP
+FROM demo_car_stream;
