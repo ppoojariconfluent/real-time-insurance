@@ -37,10 +37,6 @@ def produce_car_event(p, owner_id, owner_name, car_model):
     claim_amount = random.randint(0, 10000)
     num_claims = random.randint(1, 5)  # Random number of claims
     traffic_violations = random.randint(1, 5)  # Random traffic violations
-    
-    # Calculate risk score based on traffic violations and claim amount
-    risk_score = min(5, traffic_violations + (claim_amount / 10000))
-    
     showroom_price = random.randint(500000, 1500000)
     age_in_years = random.randint(0, 5)
     idv = calculate_idv(showroom_price, age_in_years)
@@ -51,7 +47,6 @@ def produce_car_event(p, owner_id, owner_name, car_model):
         "car_model": car_model,
         "claim_amount": claim_amount,
         "num_claims": num_claims,
-        "risk_score": risk_score,
         "traffic_violations": traffic_violations,
         "showroom_price": showroom_price,
         "age_in_years": age_in_years,
