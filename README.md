@@ -131,7 +131,7 @@ python producer.py
 
 Now that you have data flowing through Confluent, you can now easily build stream processing applications using ksqlDB. You are able to continuously transform, enrich, join, and aggregate your data using simple SQL syntax. You can gain value from your data directly from Confluent in real-time. Also, ksqlDB is a fully managed service within Confluent Cloud with a 99.9% uptime SLA. You can now focus on developing services and building your data pipeline while letting Confluent manage your resources for you.
 
-<B>This section will involve the creation of a KStream and create a aggregated stream where we calculate the premium quotes depending on the risk score in real-time using simple SQL like commands.<B>
+<B>This section will involve the creation of a KStreams where we calculate the premium quotes depending on the risk score in real-time using simple SQL like commands.<B>
 
 If you’re interested in learning more about ksqlDB and the differences between streams and tables, I recommend reading these two blogs [here](https://www.confluent.io/blog/kafka-streams-tables-part-3-event-processing-fundamentals/) and [here](https://www.confluent.io/blog/how-real-time-stream-processing-works-with-ksqldb/).
 
@@ -149,7 +149,6 @@ If you’re interested in learning more about ksqlDB and the differences between
 3. Create a ksqlDB stream from `demo_car` topic.
 
  ```
-
 CREATE STREAM demo_car_stream (
     OWNER_ID VARCHAR,
     OWNER_NAME VARCHAR,
@@ -168,6 +167,8 @@ CREATE STREAM demo_car_stream (
     TIMESTAMP='EVENT_TIMESTAMP'
 );
  ```
+Using the above stream you can create desired downstream accordingly to get the results.
+
 4. Use the following statement to query `demo_car_stream ` stream to ensure it's being populated correctly.
 
    ```
@@ -180,7 +181,7 @@ CREATE STREAM demo_car_stream (
   <img src="images/Stream -1.png" width =100% heigth=100%>
 </div>
 
-5. Create `demo_car_premium` stream which will calculate and provide the insurance quotes with IDV (insured delared value) for each car model w.r.t to its owner depending on the risk score in real-time .
+5. Create `demo_car_premium` stream which will calculate and provide the insurance quotes with IDV (insured declared value) for each car model w.r.t to its owner depending on the risk score in real-time .
 
  ```
 
@@ -203,6 +204,8 @@ SELECT OWNER_NAME,
 FROM demo_car_stream;
 
 ```
+**Explanation**
+In the above the stream , the premium calculation is basically dependent on the risk score, higher the risk score then higher will be the insurance premium a customer has to pay and vice versa.
 
 6. Use the following statement to query `demo_car_premium` stream to ensure it's being populated correctly.
 
