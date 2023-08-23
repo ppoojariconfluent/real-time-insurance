@@ -234,7 +234,7 @@ You want to delete any resources that were created during the demo so you don't 
 
 1. Run the following command to delete all resources created by Terraform
    ```bash
-   terraform apply -destory
+   terraform destroy
 
 ## Confluent Cloud Stream Governance
 
