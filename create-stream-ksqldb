@@ -18,7 +18,13 @@ CREATE STREAM demo_car_stream (
     TIMESTAMP='EVENT_TIMESTAMP'
 );
 
---STEP 2 -- create the stream for insurance premium value calculation
+--STEP 2 -- Calculate risk score
+CREATE STREAM risk_scores WITH ( KAFKA_TOPIC='risk_scores', PARTITIONS=6) AS
+SELECT dc.owner_id, dc.owner_name, dc.car_model, dc.idv,
+       GREATEST(LEAST(5.0, 1 + dc.traffic_violations + (dc.claim_amount / 10000)), 0.0) AS risk_score
+FROM demo_car_stream dc;
+
+--STEP 3 -- create the stream for insurance premium value calculation
 
 CREATE STREAM demo_car_premium WITH (
     KAFKA_TOPIC='demo_car_premium',
@@ -35,5 +41,4 @@ SELECT OWNER_NAME,
            WHEN RISK_SCORE = 1 THEN IDV * 0.01
            ELSE IDV * 0.01
        END AS PREMIUM,
-       EVENT_TIMESTAMP
-FROM demo_car_stream;
+FROM risk_scores;
