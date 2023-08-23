@@ -90,7 +90,7 @@ variable "confluent_cloud_api_secret" {
    terraform init
    ```
 
-3. Lets you preview the actions Terraform would take to modify your infrastructure or Check if there are any errors in the code.
+3. Preview the actions Terraform would take to modify your infrastructure or Check if there are any errors in the code.
    ```
    terraform plan
    ```
