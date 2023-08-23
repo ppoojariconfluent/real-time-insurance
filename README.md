@@ -61,7 +61,7 @@ In order to successfully complete this demo you need to install few tools before
 1. Clone the repository
 
 ```
-git clone
+git clone https://github.com/ppoojariconfluent/real-time-insurance.git
 
 ```
 2. This demo uses Terraform  to spin up resources that are needed.
