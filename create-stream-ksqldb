@@ -1,4 +1,4 @@
---- STEP 1 --- crete demo-car strem to populate the required data into the stream which can can be used for enrichment later--
+--- STEP 1 --- crete demo-car strem to populate the required data into the stream which can can be used for aggregation later--
 
 CREATE STREAM demo_car_stream (
     OWNER_ID VARCHAR,
