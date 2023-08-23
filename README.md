@@ -255,7 +255,7 @@ In our use case, the stream lineage appears as follows: we utilize a Python scri
 
 
 <div align="center"> 
-  <img src="images/Stream Lineage.png" width =100% heigth=100%>
+  <img src="images/Stream lineage.png" width =100% heigth=100%>
 </div>
    
 
