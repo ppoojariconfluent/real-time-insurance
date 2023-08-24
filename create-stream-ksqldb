@@ -18,9 +18,16 @@ CREATE STREAM quote_requests_stream (
 );
 
 --STEP 2 -- Calculate risk score
-CREATE STREAM risk_scores WITH ( KAFKA_TOPIC='risk_scores', PARTITIONS=6) AS
-SELECT qr.owner_id, qr.owner_name, qr.car_model, qr.idv,
-       GREATEST(LEAST(5.0, 1 + qr.traffic_violations + (qr.claim_amount / 10000)), 0.0) AS risk_score
+
+CREATE STREAM risk_scores WITH ( 
+    KAFKA_TOPIC='risk_scores', 
+    PARTITIONS=6
+    ) AS
+SELECT qr.owner_id, 
+       qr.owner_name, 
+       qr.car_model, 
+       qr.idv,
+           GREATEST(LEAST(5.0, 1 + qr.traffic_violations + (qr.claim_amount / 10000)), 0.0) AS risk_score
 FROM quote_requests_stream qr;
 
 --STEP 3 -- create the stream for insurance premium value calculation
