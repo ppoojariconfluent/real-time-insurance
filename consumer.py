@@ -14,7 +14,7 @@ conf_consumer = {
 def consume_final_insurance_quotes():
     c = Consumer(conf_consumer)
 
-    c.subscribe(['demo_car_premium'])
+    c.subscribe(['premium_quote'])
 
     try:
         while True:
