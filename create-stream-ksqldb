@@ -1,33 +1,32 @@
---- STEP 1 --- crete demo-car strem to populate the required data into the stream which can can be used for aggregation later--
+--- STEP 1 --- create quote_requests_stream stream to populate the required data into the stream--
 
-CREATE STREAM demo_car_stream (
+CREATE STREAM quote_requests_stream (
     OWNER_ID VARCHAR,
     OWNER_NAME VARCHAR,
     CAR_MODEL VARCHAR,
     CLAIM_AMOUNT DOUBLE,
     NUM_CLAIMS INT,
-    RISK_SCORE INT,
     TRAFFIC_VIOLATIONS INT,
     SHOWROOM_PRICE DOUBLE,
     AGE_IN_YEARS INT,
     IDV DOUBLE,
     EVENT_TIMESTAMP BIGINT
 ) WITH (
-    KAFKA_TOPIC='demo_car',
+    KAFKA_TOPIC='quote_requests',
     VALUE_FORMAT='JSON',
     TIMESTAMP='EVENT_TIMESTAMP'
 );
 
 --STEP 2 -- Calculate risk score
 CREATE STREAM risk_scores WITH ( KAFKA_TOPIC='risk_scores', PARTITIONS=6) AS
-SELECT dc.owner_id, dc.owner_name, dc.car_model, dc.idv,
-       GREATEST(LEAST(5.0, 1 + dc.traffic_violations + (dc.claim_amount / 10000)), 0.0) AS risk_score
-FROM demo_car_stream dc;
+SELECT qr.owner_id, qr.owner_name, qr.car_model, qr.idv,
+       GREATEST(LEAST(5.0, 1 + qr.traffic_violations + (qr.claim_amount / 10000)), 0.0) AS risk_score
+FROM quote_requests_stream qr;
 
 --STEP 3 -- create the stream for insurance premium value calculation
 
-CREATE STREAM demo_car_premium WITH (
-    KAFKA_TOPIC='demo_car_premium',
+CREATE STREAM premium_quote_stream WITH (
+    KAFKA_TOPIC='premium_quote',
     PARTITIONS=6
 ) AS
 SELECT OWNER_NAME,
@@ -40,5 +39,5 @@ SELECT OWNER_NAME,
            WHEN RISK_SCORE = 2 THEN IDV * 0.02
            WHEN RISK_SCORE = 1 THEN IDV * 0.01
            ELSE IDV * 0.01
-       END AS PREMIUM,
+       END AS PREMIUM
 FROM risk_scores;
