@@ -2,7 +2,7 @@
     <img src="images/confluent.png" width=50% height=50%>
 </div>
 
-# <div align="center">Real-time Insurance Quotes with Confluent Cloud</div>
+# <div align="center">Real-time Insurance Quotes</div>
 
 Real-time insurance quotes refer to the process of obtaining insurance price estimates or premium costs instantly, often within seconds or minutes, based on the most up-to-date and accurate information provided by the applicant. These quotes are generated using algorithms and databases that take into account various factors to determine the potential risk associated with insuring an individual or property. The goal is to provide customers with immediate and accurate pricing information to help them make informed decisions about purchasing insurance coverage.
 
@@ -131,7 +131,7 @@ python producer.py
 
 Now that you have data flowing through Confluent, you can now easily build stream processing applications using ksqlDB. You are able to continuously transform, enrich, join, and aggregate your data using simple SQL syntax. You can gain value from your data directly from Confluent in real-time. Also, ksqlDB is a fully managed service within Confluent Cloud with a 99.9% uptime SLA. You can now focus on developing services and building your data pipeline while letting Confluent manage your resources for you.
 
-<B>This section will involve the creation of a KStreams where we calculate the premium quotes depending on the risk score in real-time using simple SQL like commands.<B>
+This section will involve the creation of a KStreams where we calculate the premium quotes depending on the risk score in real-time using simple SQL like commands.
 
 If you’re interested in learning more about ksqlDB and the differences between streams and tables, I recommend reading these two blogs [here](https://www.confluent.io/blog/kafka-streams-tables-part-3-event-processing-fundamentals/) and [here](https://www.confluent.io/blog/how-real-time-stream-processing-works-with-ksqldb/).
 
@@ -274,7 +274,7 @@ You want to delete any resources that were created during the demo so you don't 
    ```bash
    terraform destroy
 
-## Confluent Cloud Stream Governance
+# Confluent Cloud Stream Governance
 
 Confluent offers data governance tools such as Stream Quality, Stream Catalog, and Stream Lineage in a package called Stream Governance. These features ensure your data is high quality, observable and discoverable. Learn more about **Stream Governance** [here](https://www.confluent.io/product/stream-governance/) and refer to the [docs](https://docs.confluent.io/cloud/current/stream-governance/overview.html) page for detailed information.
 
