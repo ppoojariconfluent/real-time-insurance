@@ -146,48 +146,82 @@ If you’re interested in learning more about ksqlDB and the differences between
 
    If you use the default value of `latest`, then ksqlDB will read form the tail of the topics rather than the beginning, which means streams and tables won't have all the data you think they should.
 
-3. Create a ksqlDB stream from `demo_car` topic.
+3. Create a ksqlDB stream from `quote_requests` topic.
 
- ```
-CREATE STREAM demo_car_stream (
+ ```SQL
+CREATE STREAM quote_requests_stream (
     OWNER_ID VARCHAR,
     OWNER_NAME VARCHAR,
     CAR_MODEL VARCHAR,
     CLAIM_AMOUNT DOUBLE,
     NUM_CLAIMS INT,
-    RISK_SCORE INT,
     TRAFFIC_VIOLATIONS INT,
     SHOWROOM_PRICE DOUBLE,
     AGE_IN_YEARS INT,
     IDV DOUBLE,
     EVENT_TIMESTAMP BIGINT
 ) WITH (
-    KAFKA_TOPIC='demo_car',
+    KAFKA_TOPIC='quote_requests',
     VALUE_FORMAT='JSON',
     TIMESTAMP='EVENT_TIMESTAMP'
 );
  ```
 **EXPLANATION**
-A stream represents a series of messages flowing in from an input topic which has been deserialized from bytes and has a schema applied to it so the data can be processed in ksqlDB. The initial demo_car_stream is being created directly based off the data in the demo_car topic. As a user, you have the ability to define additional downstream streams in ksqlDB that filter, transform, aggregate and enrich the data.
 
-4. Use the following statement to query `demo_car_stream ` stream to ensure it's being populated correctly.
+A stream represents a series of messages flowing in from an input topic which has been deserialized from bytes and has a schema applied to it so the data can be processed in ksqlDB. The initial quote_requests_stream is being created directly based off the data in the quote_requests topic. As a user, you have the ability to define additional downstream streams in ksqlDB that filter, transform, aggregate and enrich the data.
 
-   ```
-   SELECT * FROM demo_car_stream EMIT CHANGES;
+4. Use the following statement to query `quote_requests_stream ` stream to ensure it's being populated correctly.
+
+   ```SQL
+   SELECT * FROM quote_requests_stream EMIT CHANGES;
    ```
 
    Stop the running query by clicking on **Stop**.
 
    <div align="center"> 
-  <img src="images/Stream -1.png" width =100% heigth=100%>
+  <img src="images/quote.png" width =100% heigth=100%>
 </div>
 
-5. Create `demo_car_premium` stream which will calculate and provide the insurance quotes with IDV (insured declared value) for each car model w.r.t to its owner depending on the risk score in real-time .
+5. Create `risk_scores` stream which will calculate risk based on the previous claim amount and number of traffice violations .
 
- ```
+ ```SQL
+CREATE STREAM risk_scores WITH ( 
+    KAFKA_TOPIC='risk_scores', 
+    PARTITIONS=6
+    ) AS
+SELECT qr.owner_id, 
+       qr.owner_name, 
+       qr.car_model, 
+       qr.idv,
+           GREATEST(LEAST(5.0, 1 + qr.traffic_violations + (qr.claim_amount / 10000)), 0.0) AS risk_score
+FROM quote_requests_stream qr;
 
-CREATE STREAM demo_car_premium WITH (
-    KAFKA_TOPIC='demo_car_premium',
+```
+**EXPLANATION OF THE RISK SCORE CALCULATION**
+
+1 + traffic_violations + (claim_amount / 10000): Here, we're adding 1 to the sum of traffic_violations and the normalized claim amount. This is done to ensure that even if there are no traffic violations and no claims, the risk score is at least 1.
+LEAST(5.0, ..): This function ensures that the calculated value doesn't exceed 5.0. 
+GREATEST(.., 0.0): Finally, this function ensures that the calculated value doesn't go below 0.0. Negative risk scores don't make sense, so we clamp the value to a minimum of 0.0.
+It ensures that the risk score is at least 1.0, not greater than 5.0, and not negative. 
+This calculated risk score is then included in the new risk_scores stream along with the owner_id and car_model from the original quote_requests_stream.
+
+6. Use the following statement to query `risk_scores` stream to ensure it's being populated correctly.
+
+   ```SQL
+   SELECT * FROM risk_scores EMIT CHANGES;
+   ```
+
+   Stop the running query by clicking on **Stop**.
+<div align="center"> 
+  <img src="images/risk.png" width =100% heigth=100%>
+</div>
+
+
+7. Create `premium_quotes_stream` stream which will calculate the final premium quote a customer has to pay depending on the risk score calcualted from the risk_scores stream .
+
+ ```SQL
+CREATE STREAM premium_quotes_stream WITH (
+    KAFKA_TOPIC='premium_quotes',
     PARTITIONS=6
 ) AS
 SELECT OWNER_NAME,
@@ -200,29 +234,25 @@ SELECT OWNER_NAME,
            WHEN RISK_SCORE = 2 THEN IDV * 0.02
            WHEN RISK_SCORE = 1 THEN IDV * 0.01
            ELSE IDV * 0.01
-       END AS PREMIUM,
-       EVENT_TIMESTAMP
-FROM demo_car_stream;
+       END AS PREMIUM
+FROM risk_scores;
 
 ```
-**Explanation**
-In the above the stream , the premium calculation is basically dependent on the risk score, higher the risk score then higher will be the insurance premium a customer has to pay and vice versa.
 
-6. Use the following statement to query `demo_car_premium` stream to ensure it's being populated correctly.
+8. Use the following statement to query `premium_quotes_stream` stream to ensure it's being populated correctly.
 
    ```SQL
-   SELECT * FROM demo_car_premium EMIT CHANGES;
+   SELECT * FROM premium_quotes_stream EMIT CHANGES;
    ```
 
    Stop the running query by clicking on **Stop**.
 <div align="center"> 
-  <img src="images/Aggregated stream.png" width =100% heigth=100%>
+  <img src="images/premium.png" width =100% heigth=100%>
 </div>
-
 
 ## Consume the Insurance quotes event to get the Insurance premium value for each owner
 
-```
+```py
 python3 consumer.py
 ```
 <div align="center"> 
@@ -256,7 +286,7 @@ In our use case, the stream lineage appears as follows: we utilize a Python scri
 
 
 <div align="center"> 
-  <img src="images/Stream lineage.png" width =100% heigth=100%>
+  <img src="images/Stream Lineage.png" width =100% heigth=100%>
 </div>
    
 
