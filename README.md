@@ -199,10 +199,14 @@ FROM quote_requests_stream qr;
 ```
 **EXPLANATION OF THE RISK SCORE CALCULATION**
 
-1 + traffic_violations + (claim_amount / 10000): Here, we're adding 1 to the sum of traffic_violations and the normalized claim amount. This is done to ensure that even if there are no traffic violations and no claims, the risk score is at least 1.
+1 + traffic_violations + (claim_amount / 10000): Here, we're adding 1 to the sum of traffic_violations and the normalized claim amount. 
+
+This is done to ensure that even if there are no traffic violations and no claims, the risk score is at least 1.
+
 LEAST(5.0, ..): This function ensures that the calculated value doesn't exceed 5.0. 
+
 GREATEST(.., 0.0): Finally, this function ensures that the calculated value doesn't go below 0.0. Negative risk scores don't make sense, so we clamp the value to a minimum of 0.0.
-It ensures that the risk score is at least 1.0, not greater than 5.0, and not negative. 
+
 This calculated risk score is then included in the new risk_scores stream along with the owner_id and car_model from the original quote_requests_stream.
 
 6. Use the following statement to query `risk_scores` stream to ensure it's being populated correctly.
@@ -282,7 +286,7 @@ Confluent offers data governance tools such as Stream Quality, Stream Catalog, a
     - Where is it going?
     - Where, when, and how was it transformed?
 
-In our use case, the stream lineage appears as follows: we utilize a Python script to generate events that are sent to the demo_car topic. These events are then aggregated on the stream with the assistance of a Ksqldb , where the insurance premium is calculated.
+In our use case, the stream lineage appears as follows: we utilize a Python script to generate events that are sent to the quote_requests topic. Then we use KSQLDB to create streams for calculating the premium quotes in real-time.
 
 
 <div align="center"> 
