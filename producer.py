@@ -53,7 +53,7 @@ def produce_car_event(p, owner_id, owner_name, car_model):
         "idv": idv,
         "event_timestamp": int(time.time() * 1000)
     }
-    p.produce("demo_car", key=car_model, value=json.dumps(event_data))
+    p.produce("quote_requests", key=car_model, value=json.dumps(event_data))
     p.flush()
 
 def main():
