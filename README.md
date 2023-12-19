@@ -2,18 +2,18 @@
     <img src="images/confluent.png" width=50% height=50%>
 </div>
 
-# <div align="center">Real-time Insurance Quotes</div>
+# <div align="center">Real-Time Insurance Quotes</div>
 
 Real-time insurance quotes refer to the process of obtaining insurance price estimates or premium costs instantly, often within seconds or minutes, based on the most up-to-date and accurate information provided by the applicant. These quotes are generated using algorithms and databases that take into account various factors to determine the potential risk associated with insuring an individual or property. The goal is to provide customers with immediate and accurate pricing information to help them make informed decisions about purchasing insurance coverage.
 
 
 Real-time insurance quotes typically involve inputting specific details about the insured entity, such as personal information (age, gender, location), details about the property or vehicle being insured (make, model, year), and any other relevant information that could impact the risk assessment and subsequent premium calculation. This data is processed by the insurance company's systems, which use historical data, actuarial tables, and predictive modeling to generate a quote that reflects the potential cost of coverage.
 
-This demo guides you through the process of getting vehicle insurance quotes in real-time .
+This demo guides you through the process of getting vehicle insurance quotes in real time.
 
 ## Architecture Diagram
 
-This demo makes use of a Python data generator script to transmit the customer information events to Confluent Cloud. The events are then processed through KSQLDB, where they are aggregated to perform real-time calculations to provide the insurance quotes based on the risk score. We are using python consumer to consume the data which contains the Insurance premium value and IDV for each Cars w.r.t Owner
+This demo makes use of a Python data generator script to transmit the customer information events to Confluent Cloud. The events are then processed through KSQLDB, where they are aggregated to perform real-time calculations to provide the insurance quotes based on the risk score. We are using python consumer to consume the data which contains the Insurance premium value and IDV for each Cars w.r.t Owner.
 
 <div align="center"> 
   <img src="images/Architecture.png" width =100% heigth=100%>
@@ -263,17 +263,6 @@ python3 consumer.py
   <img src="images/Consumer.png" width =100% heigth=100%>
 </div>
 
-# Teardown
-
-You want to delete any resources that were created during the demo so you don't incur additional charges.
-
-
-## Infrastructure
-
-1. Run the following command to delete all resources created by Terraform
-   ```bash
-   terraform destroy
-
 # Confluent Cloud Stream Governance
 
 Confluent offers data governance tools such as Stream Quality, Stream Catalog, and Stream Lineage in a package called Stream Governance. These features ensure your data is high quality, observable and discoverable. Learn more about **Stream Governance** [here](https://www.confluent.io/product/stream-governance/) and refer to the [docs](https://docs.confluent.io/cloud/current/stream-governance/overview.html) page for detailed information.
@@ -288,18 +277,32 @@ Confluent offers data governance tools such as Stream Quality, Stream Catalog, a
 
 In our use case, the stream lineage appears as follows: we utilize a Python script to generate events that are sent to the quote_requests topic. Then we use KSQLDB to create streams for calculating the premium quotes in real-time.
 
-
 <div align="center"> 
   <img src="images/Stream Lineage.png" width =100% heigth=100%>
 </div>
+
+Confluent expands Stream Governance capabilities with [**Data Portal**](https://docs.confluent.io/cloud/current/stream-governance/data-portal.html), allowing teams to easily find all the real-time data streams in an organization. 
+
+
+# Teardown
+
+You want to delete any resources that were created during the demo so you don't incur additional charges.
+
+
+## Infrastructure
+
+1. Run the following command to delete all resources created by Terraform
+   ```bash
+   terraform destroy
    
 
 
 # References
 1. Confluent Cloud cluster types [page](https://docs.confluent.io/cloud/current/clusters/cluster-types.html)
-2. ksqlDB [page](https://www.confluent.io/product/ksqldb/) and [use cases](https://developer.confluent.io/tutorials/#explore-top-use-cases)
-3. Stream Governance [page](https://www.confluent.io/product/stream-governance/) and [doc](https://docs.confluent.io/cloud/current/stream-governance/overview.html)
-4. RBAC in Confluent Cloud [page](https://docs.confluent.io/cloud/current/access-management/access-control/rbac/overview.html)
-5. Terraform provider for Confluent [page](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs)
+2. Confluent Connectors [page](https://www.confluent.io/product/confluent-connectors/)
+3. ksqlDB [page](https://www.confluent.io/product/ksqldb/) and [use cases](https://developer.confluent.io/tutorials/#explore-top-use-cases)
+4. Stream Governance [page](https://www.confluent.io/product/stream-governance/) and [doc](https://docs.confluent.io/cloud/current/stream-governance/overview.html)
+5. RBAC in Confluent Cloud [page](https://docs.confluent.io/cloud/current/access-management/access-control/rbac/overview.html)
+6. Terraform provider for Confluent [page](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs)
 
   
